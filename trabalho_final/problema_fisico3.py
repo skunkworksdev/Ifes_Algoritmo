@@ -16,7 +16,7 @@ print("* Primeiro passo: Definir as variáveis utilizadas no problema, "
 #%%
 
 import math
-import numpy
+
 
 vetor = [0.20, 0.5, 2, 0.349, 0.1, 2, 9.8]
 
