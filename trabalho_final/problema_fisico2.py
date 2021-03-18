@@ -1,52 +1,93 @@
-from vpython import *
+"""
 
-scene = canvas(title='<h1>Oscilador harmónico simples</h1>', autoscale=0,
-               width=500, height=500, range=7, forward=vec(0,0,-1))
-chao = box(pos=vec(0,-6.1,0),size=vec(20,0.1,10),texture=textures.wood)
-parede = box(pos=vec(0,3.85,-5.05),size=vec(20,20,0.1), color=vec(0.7,0.7,0.7))
-sitio = text(pos=vec(0,3.85,-5), text='def.fe.up.pt', color=color.blue,
-              align='center', depth=0)
+Problema físico 2: Dado o sistema abaixo onde m1 = 6kg e m2 = 4kg e o
+coeficiente de atrito cinético é 0,2 entre o “bloco 1” e a prancha.
+O bloco na prancha está encostado na mola de constante elástica 180N/m que está
+inicialmente comprimida de 30cm. A mola é liberada empurrando o “bloco 1”,
+sem afrouxar a corda. Ao final de 40cm de percurso qual a velocidade dos
+blocos?
 
- # Mola e cilindro
-bar0 = curve(radius=0.03)
-for ang in arange(pi,-pi/2.,-0.1):
-    bar0.append(vec(0, 5.2+0.23*sin(ang), 0.23*cos(ang)))
-bar0.append(pos=vec(0,4.5,0))
-bar0.append(pos=vec(0,4.5,0.3))
-mola1 = helix(pos=vec(0,4.5,0), radius=0.3, thickness=0.05, coils=30,
-              axis = vec(0,-5.8,0))
+"""
 
-bar1 = curve(radius=0.03, pos=[vec(0,-1.6,0),vec(0,-1.3,0),vec(0,-1.3,0.3)])
-c1 = cylinder(pos=vec(0,-2,0),radius=0.5,axis=vec(0,0.4,0),
-              color=vec(0.3,0.3,0.3))
+print("* Primeiro passo: Definir as variáveis utilizadas no problema, e em "
+      "seguida importar as bibliotecas para utilizar as funções requeridas. "
+      "\n* Variáveis fornecidas no desafio. \n")
 
- # Barras do suporte
-s1 = cylinder(pos=vec(3,5.2,0),radius=0.2, axis=vec(-4,0,0))
-s2 = cylinder(pos=vec(2.5,5.2,0),radius=0.6, axis=vec(-1,0,0),color=vec(0.5,0.5,0.6))
-s3 = cylinder(pos=vec(2,-5,0.4),radius=0.2, axis=vec(0,11,0))
-s4 = cylinder(pos=vec(2,-6.05,0.4),radius=0.8, axis=vec(0,1,0),color=vec(0.9,0.9,0.6))
+import math
+import numpy
 
- # Função que alonga/comprime a mola y1 unidades
-def alongar_mola(y1):
-    c1.pos.y = y1 - 2
-    bar1.origin = vec(0,y1,0)
-    mola1.axis.y = y1 - 5.8
+m1 = 6  # massa 1 em quilograma
+m2 = 4  # massa 2 em quilograma
+Uc = 0.2  # coeficiente de atrito cinético
+k = 180  # constante elástica
+d = 0.4  # distancia final
+x = 0.3  # distancia comprimida
+g = 9.8  # gravidade
+print("As variáveis definidas "
+      "são:",m1,"-", m2,"-", Uc,"-", k,"-", d,"-", x,"-", g)
 
-def uf(rf):          # velocidade no espaço de fase
-    a = (-k1*rf.y-b1*rf.z)/m1
-    return vec(0,rf.z, a)
 
-rf = vec(0, 0.9, 0)
-m1 = 0.3; k1 = 16; b1 = 0.02
-dt = 0.01
-alongar_mola(rf.y)
+print("* Segundo passo: Realizar os cálculos básicos necessários para "
+      "identificar a força na mola. \n")
 
-while True:
-    rate(100)
-    uf1 = uf(rf)
-    uf2 = uf(rf + dt*uf1 / 2.)
-    uf3 = uf(rf + dt*uf2 / 2.)
-    uf4 = uf(rf + dt*uf3)
-    ufm = (uf1 + 2*uf2 + 2*uf3 + uf4)/6.
-    rf += dt*ufm
-    alongar_mola(rf.y)
+def força(k, x):
+    print("A força na mola comprimida é de:", ((-k) * x),"N. \n")
+força(180,0.3)
+# F = (-k) * x
+# print("A força na mola comprimida é de:", F,"N.")
+
+print("* Terceiro passo: Calcular a energia inicial do sistema. \n")
+# Obs: Para essa questão em específico, precisei efetuar a quebra de linha
+# nas linhas 46 e 47 para ficar um código de acordo com a PEP 08.
+
+def energia(k, x):
+    print("A Energia Inicial do Sistema "
+          "é de: Ei=",((k * (x)**2)/ 2),"J. Sistema em repouso inicialmente")
+energia(180,0.3)
+
+# A resposta correta > Ei = 8.1J
+
+"""
+* Quarto passo: Calcular o restante do problema
+"""
+
+# Uc = Delta * Emec
+# V1 = V2 = V
+# Uc * m1 * d = Emec(final) - Emec(inicial)
+
+# obs: Corda não afrouxa | d = h
+
+# Uc * m1 * d = ((m2 * V2**2) / 2) + ((m1 * V1 * 2) / 2) - (m2 * g * d + Ei)
+
+def atrito(Uc, m1, g, d):
+    print("O coeficiente de atrito para essa equação é de: ", Uc * m1 * g * d,".")
+
+atrito(0.2, 6, 9.8, 0.4)
+
+
+# Será feito o cálculo da variação da Energia mec utilizando uma lista com os
+# valores das variáveis definidas no início do exercício
+
+l = [6, 4, 9.8, 0.4, 8.1]  # lista contendo os valores das variáveis
+resultado_parcial = ((l[1] / 2) + (l[0] / 2))
+resultado_parcial1 = ((l[1] * l[2] * l[3]) + 8.1)
+print(resultado_parcial, resultado_parcial1)
+
+
+"""
+* Quinto passo: No último passo do exercício, as equações serão igualadas para
+se encontrar a resposta final, seerá realizado o cálculo
+de radiciação utilizando a função "math".
+"""
+
+
+V_ao_quadrado = int(input("Digite o valor de V^2: "))
+Delta_Emc = resultado_parcial1 + 4.78
+
+if V_ao_quadrado == 5:
+    print("O resultado final da velocidade é de: ", math.sqrt(Delta_Emc / V_ao_quadrado),"m/s")
+else:
+    print("O resultado está diferente do exercício.")
+
+
+
